@@ -1,0 +1,31 @@
+{
+  "name": "runmythings",
+  "version": "0.0.0",
+  "license": "MIT",
+  "bin": "dist/index.js",
+  "engines": {
+    "node": ">=16.13.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn build && node dist",
+    "pretest": "yarn build"
+  },
+  "files": [
+    "dist/*"
+  ],
+  "dependencies": {
+    "ink": "^3.2.0",
+    "ink-use-stdout-dimensions": "^1.0.5",
+    "meow": "^9.0.0",
+    "react": "^17.0.2"
+  },
+  "devDependencies": {
+    "@sindresorhus/tsconfig": "^2.0.0",
+    "@types/react": "^17.0.34",
+    "eslint": "^8.2.0",
+    "eslint-plugin-react": "^7.27.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "typescript": "^4.4.4"
+  }
+}
