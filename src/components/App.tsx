@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, useApp, useInput } from "ink";
+import { Box, useApp, useFocus, useFocusManager, useInput } from "ink";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
-import Scrollbox from "./components/Scrollbox";
+import Scrollbox from "./Scrollbox";
 
 const ports = [8080, 8081, 8082];
 

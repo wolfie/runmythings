@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@sindresorhus/tsconfig": "^2.0.0",
+    "@types/node": "^16.11.7",
     "@types/react": "^17.0.34",
     "eslint": "^8.2.0",
     "eslint-plugin-react": "^7.27.0",

@@ -2,7 +2,7 @@
 import React from "react";
 import { render } from "ink";
 import meow from "meow";
-import App from "./App";
+import App from "./components/App";
 
 const _cli = meow(
   `
