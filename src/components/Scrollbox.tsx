@@ -5,7 +5,7 @@ const clamp = (min: number, max: number) => (n: number) =>
   Math.max(min, Math.min(max, n));
 
 export type ScrollPos = number | "top" | "bottom";
-type Props = BoxProps & {
+export type ScrollboxProps = BoxProps & {
   lines: string[];
   scrollTop: ScrollPos;
   onScrollClamped: (actualScrollTop: number) => void;
@@ -16,7 +16,7 @@ const Scrollbox = ({
   scrollTop,
   onScrollClamped,
   ...boxProps
-}: Props) => {
+}: ScrollboxProps) => {
   const ref = React.useRef(null);
   const [boxHeight, setBoxHeight] = React.useState(0);
 
@@ -54,12 +54,14 @@ const Scrollbox = ({
           <Text key={i}>{line}</Text>
         ))}
       </Box>
-      <Box width={1} flexDirection="column">
-        <Box flexGrow={scrollTopPercentage}></Box>
-        <Box>
-          <Text>█</Text>
+      {boxHeight < lines.length && (
+        <Box width={1} flexDirection="column">
+          <Box flexGrow={scrollTopPercentage}></Box>
+          <Box>
+            <Text>█</Text>
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 };

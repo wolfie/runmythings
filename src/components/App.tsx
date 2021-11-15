@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, useApp, useFocus, useFocusManager, useInput } from "ink";
+import { Box, useApp, useInput } from "ink";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
-import Scrollbox from "./Scrollbox";
+import Process from "./Process";
 
 const ports = [8080, 8081, 8082];
 
@@ -70,16 +70,11 @@ const App = () => {
   return (
     <Box width={screenWidth - 1} height={screenHeight - 1}>
       {ports.map((port, i) => (
-        <Scrollbox
+        <Process
           key={port}
+          cmd={["node", "./test.js", port.toString()]}
           borderStyle={focusIndex === i ? "double" : "single"}
           width="33.33%"
-          lines={[
-            port.toString(),
-            ...Array(20)
-              .fill(".")
-              .map((_, i) => i.toString()),
-          ]}
           scrollTop={scrollPositions[i]}
           onScrollClamped={(actualScrollTop) =>
             setScrollPosition(actualScrollTop, i)
