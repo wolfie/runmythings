@@ -1,14 +1,29 @@
+import { useInput } from "ink";
 import React from "react";
 import runProcess from "../runProcess";
 import Scrollbox, { ScrollboxProps } from "./Scrollbox";
 
-type Line = [type: "stdout" | "stderr", line: string];
+type Line = [type: "stdout" | "stderr" | "restart", line: string];
 
 export type ProcessProps = Omit<ScrollboxProps, "lines"> & {
   cmd: string[];
+  hasFocus: boolean;
 };
-const Process: React.FC<ProcessProps> = ({ cmd, ...scrollboxProps }) => {
+const Process: React.FC<ProcessProps> = ({
+  cmd,
+  hasFocus,
+  ...scrollboxProps
+}) => {
   const [stdout, setStdout] = React.useState<Line[]>([]);
+  const [restartToken, setRestartToken] = React.useState(Symbol());
+
+  useInput((input) => {
+    if (!hasFocus) return;
+    if (input === "r") {
+      setRestartToken(Symbol());
+      setStdout((stdout) => [...stdout, ["restart", "Restarting process"]]);
+    }
+  });
 
   React.useEffect(() => {
     const process = runProcess(cmd[0], ...cmd.slice(1));
@@ -21,10 +36,14 @@ const Process: React.FC<ProcessProps> = ({ cmd, ...scrollboxProps }) => {
       ]);
     });
     return () => process.kill();
-  }, []);
+  }, [restartToken]);
 
   return (
-    <Scrollbox lines={stdout.map((line) => line[1])} {...scrollboxProps} />
+    <Scrollbox
+      lines={stdout.map((line) => line[1])}
+      {...scrollboxProps}
+      hasFocus={hasFocus}
+    />
   );
 };
 

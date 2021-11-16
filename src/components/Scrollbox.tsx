@@ -9,12 +9,14 @@ export type ScrollboxProps = BoxProps & {
   lines: string[];
   scrollTop: ScrollPos;
   onScrollTopUpdated: (actualScrollTop: number) => void;
+  hasFocus: boolean;
 };
 
 const Scrollbox = ({
   lines,
   scrollTop,
   onScrollTopUpdated,
+  hasFocus,
   ...boxProps
 }: ScrollboxProps) => {
   const ref = React.useRef(null);
@@ -51,7 +53,7 @@ const Scrollbox = ({
   );
 
   return (
-    <Box {...boxProps}>
+    <Box {...boxProps} borderStyle={hasFocus ? "double" : "single"}>
       <Box height="100%" ref={ref} flexDirection="column" flexGrow={1}>
         {visibleLines.map((line, i) => (
           <Text key={i}>{line}</Text>

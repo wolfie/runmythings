@@ -73,12 +73,12 @@ const App = () => {
         <Process
           key={port}
           cmd={["node", "./echoLoop.js"]}
-          borderStyle={focusIndex === i ? "double" : "single"}
           width="33.33%"
           scrollTop={scrollPositions[i]}
           onScrollTopUpdated={(actualScrollTop) =>
             setScrollPosition(actualScrollTop, i)
           }
+          hasFocus={focusIndex === i}
         />
       ))}
     </Box>
