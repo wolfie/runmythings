@@ -9,6 +9,7 @@ export type ScrollboxProps = BoxProps & {
   lines: string[];
   scrollTop: ScrollPos;
   onScrollTopUpdated: (actualScrollTop: number) => void;
+  onBoxHeightUpdated: (rows: number) => void;
   hasFocus: boolean;
 };
 
@@ -17,6 +18,7 @@ const Scrollbox = ({
   scrollTop,
   onScrollTopUpdated,
   hasFocus,
+  onBoxHeightUpdated,
   ...boxProps
 }: ScrollboxProps) => {
   const ref = React.useRef(null);
@@ -29,6 +31,7 @@ const Scrollbox = ({
     if (!ref.current) return;
     const { height } = measureElement(ref.current);
     setBoxHeight(height);
+    onBoxHeightUpdated(height);
   }, [lines]);
 
   const rawScrollTop =
