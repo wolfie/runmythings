@@ -72,7 +72,7 @@ const App = () => {
       {ports.map((port, i) => (
         <Process
           key={port}
-          cmd={["node", "./test.js", port.toString()]}
+          cmd={["node", "./echoLoop.js"]}
           borderStyle={focusIndex === i ? "double" : "single"}
           width="33.33%"
           scrollTop={scrollPositions[i]}
