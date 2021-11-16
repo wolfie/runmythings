@@ -14,7 +14,7 @@ const Process: React.FC<ProcessProps> = ({ cmd, ...scrollboxProps }) => {
     const process = runProcess(cmd[0], ...cmd.slice(1));
     process.onStdout((chunk) => {
       const string = chunk.toString("utf-8");
-      const lines = string.split("\n");
+      const lines = string.split("\n").filter((line) => line.length > 0);
       setStdout((stdout) => [
         ...stdout,
         ...lines.map<Line>((line) => ["stdout", line]),
