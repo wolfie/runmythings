@@ -1,3 +1,8 @@
+const fs = require("fs");
+console.log(
+  "Running this code:\n" + fs.readFileSync(__filename, { encoding: "utf-8" })
+);
+
 let i = 0;
 
 const echoLoop = () => {
