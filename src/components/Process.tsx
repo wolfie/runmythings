@@ -71,7 +71,13 @@ const Process: React.FC<ProcessProps> = ({ cmd, hasFocus, ...styles }) => {
   return (
     <Scrollbox
       {...styles}
-      lines={stdout.map((line) => line[1])}
+      lines={stdout.map(([type, text]) =>
+        type === "restart"
+          ? { color: "black", backgroundColor: "red", text }
+          : type === "stderr"
+          ? { color: "red", text }
+          : { text }
+      )}
       hasFocus={hasFocus}
       scrollTop={scrollTop}
       onScrollTopUpdated={setScrollTop}

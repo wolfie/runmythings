@@ -1,12 +1,16 @@
-import { Box, BoxProps, measureElement, Text } from "ink";
+import { Box, BoxProps, measureElement, Text, TextProps } from "ink";
 import React from "react";
 
 const clamp = (min: number, max: number) => (n: number) =>
   Math.max(min, Math.min(max, n));
 
+type Line =
+  | string
+  | ({ text: string } & Pick<TextProps, "color" | "backgroundColor">);
+
 export type ScrollPos = number | "top" | "bottom";
 export type ScrollboxProps = BoxProps & {
-  lines: string[];
+  lines: Line[];
   scrollTop: ScrollPos;
   onScrollTopUpdated: (actualScrollTop: number) => void;
   onBoxHeightUpdated: (rows: number) => void;
@@ -58,9 +62,19 @@ const Scrollbox = ({
   return (
     <Box {...boxProps} borderStyle={hasFocus ? "double" : "single"}>
       <Box height="100%" ref={ref} flexDirection="column" flexGrow={1}>
-        {visibleLines.map((line, i) => (
-          <Text key={i}>{line}</Text>
-        ))}
+        {visibleLines.map((line, i) =>
+          typeof line === "string" ? (
+            <Text key={i}>{line}</Text>
+          ) : (
+            <Text
+              key={i}
+              color={line.color}
+              backgroundColor={line.backgroundColor}
+            >
+              {line.text}
+            </Text>
+          )
+        )}
       </Box>
       {boxHeight < lines.length && (
         <Box width={1} flexDirection="column">
