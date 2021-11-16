@@ -60,9 +60,9 @@ const App = () => {
   const pageful = Math.max(1, screenHeight - 5);
   const scroll = (amount: number) => () =>
     modifyScrollPosition(amount, focusIndex);
-  const scrollDown = scroll(1);
+  const scrollDown = scroll(2);
   const pageDown = scroll(pageful);
-  const scrollUp = scroll(-1);
+  const scrollUp = scroll(-2);
   const pageUp = scroll(-pageful);
   const home = () => setScrollPosition(0, focusIndex);
   const end = () => setScrollPosition(Infinity, focusIndex);
@@ -76,7 +76,7 @@ const App = () => {
           borderStyle={focusIndex === i ? "double" : "single"}
           width="33.33%"
           scrollTop={scrollPositions[i]}
-          onScrollClamped={(actualScrollTop) =>
+          onScrollTopUpdated={(actualScrollTop) =>
             setScrollPosition(actualScrollTop, i)
           }
         />

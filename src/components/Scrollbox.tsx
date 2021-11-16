@@ -8,13 +8,13 @@ export type ScrollPos = number | "top" | "bottom";
 export type ScrollboxProps = BoxProps & {
   lines: string[];
   scrollTop: ScrollPos;
-  onScrollClamped: (actualScrollTop: number) => void;
+  onScrollTopUpdated: (actualScrollTop: number) => void;
 };
 
 const Scrollbox = ({
   lines,
   scrollTop,
-  onScrollClamped,
+  onScrollTopUpdated,
   ...boxProps
 }: ScrollboxProps) => {
   const ref = React.useRef(null);
@@ -39,12 +39,15 @@ const Scrollbox = ({
   const clampedScrollTop = clampScroll(rawScrollTop);
   const scrollTopPercentage = clampedScrollTop / maxScrollPos;
 
-  if (rawScrollTop !== clampedScrollTop)
-    setTimeout(() => onScrollClamped(clampedScrollTop), 0);
+  const autoscrolledScrollTop =
+    clampedScrollTop + 1 === maxScrollPos ? maxScrollPos : clampedScrollTop;
+
+  if (rawScrollTop !== autoscrolledScrollTop)
+    setTimeout(() => onScrollTopUpdated(autoscrolledScrollTop), 0);
 
   const visibleLines = lines.slice(
-    clampedScrollTop,
-    clampedScrollTop + boxHeight
+    autoscrolledScrollTop,
+    autoscrolledScrollTop + boxHeight
   );
 
   return (
