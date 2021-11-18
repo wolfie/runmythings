@@ -2,10 +2,12 @@ import React from "react";
 import { Box, useApp, useInput } from "ink";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
 import Process from "./Process";
+import splitQuotedString from "../splitQuotedString";
 
-const ports = [8080, 8081, 8082];
-
-const App = () => {
+type AppProps = {
+  commands: string[];
+};
+const App: React.FC<AppProps> = ({ commands }) => {
   const { exit } = useApp();
   useInput((input, key) => {
     // console.log(input);
@@ -26,20 +28,20 @@ const App = () => {
   const [focusIndex, setFocusIndex] = React.useState(0);
 
   const focusNext = () =>
-    setFocusIndex((currentFocus) => (currentFocus + 1) % ports.length);
+    setFocusIndex((currentFocus) => (currentFocus + 1) % commands.length);
   const focusPrev = () =>
     setFocusIndex((currentFocus) => {
       let nextFocus = currentFocus - 1;
-      if (nextFocus < 0) nextFocus = ports.length - 1;
+      if (nextFocus < 0) nextFocus = commands.length - 1;
       return nextFocus;
     });
 
   return (
     <Box width={screenWidth - 1} height={screenHeight - 1}>
-      {ports.map((port, i) => (
+      {commands.map((command, i) => (
         <Process
-          key={port}
-          cmd={["node", "./echoLoop.js"]}
+          key={command}
+          cmd={splitQuotedString(command)}
           width="33.33%"
           hasFocus={focusIndex === i}
         />

@@ -4,25 +4,31 @@ import { render } from "ink";
 import meow from "meow";
 import App from "./components/App";
 
-const _cli = meow(
+const cli = meow(
   `
-Usage
-	$ runmythings
+  Usage
+    $ runmythings <cmd> [<cmd> [<cmd>]]
 
-Options
-	--name  Your name
+  Options
+    --help      show this help
+    --version   show version
 
-Examples
-	$ runmythings --name=Jane
-	Hello, Jane
-`,
-  {
-    flags: {
-      name: {
-        type: "string",
-      },
-    },
-  }
+  Examples
+    $ runmythings "echo \\"hello world\\""
+`
 );
 
-render(<App />);
+if (cli.input.length === 0) {
+  console.error("At least one process required");
+  console.error(cli.help);
+  process.exit(1);
+}
+if (cli.input.length > 3) {
+  console.error("No more than three processes supported");
+  console.error(cli.help);
+  process.exit(1);
+}
+
+console.log(cli.input);
+
+render(<App commands={cli.input} />);
