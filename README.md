@@ -18,6 +18,21 @@ A task runner for your text based GUI needs that can kill and rerun your process
 <dd>Kill and restart focused process</dd>
 
 <dt>
+  <kbd>Ctrl</kbd><kbd>R</kbd>
+</dt>
+<dd>Kill and restart all processes</dd>
+
+<dt>
+  <kbd>K</kbd>
+</dt>
+<dd>Kill focused process</dd>
+
+<dt>
+  <kbd>Ctrl</kbd><kbd>K</kbd>
+</dt>
+<dd>Kill all processes</dd>
+
+<dt>
   <kbd>&larr;</kbd>,
   <kbd>&rarr;</kbd>
 </dt>
