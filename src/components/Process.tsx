@@ -1,27 +1,76 @@
-import { useInput } from "ink";
+import { Key, useInput } from "ink";
 import { Styles } from "ink/build/styles";
 import React from "react";
-import runProcess from "../runProcess";
 import Scrollbox from "./Scrollbox";
+import os from "os";
+import useProcess, { ExitHandler } from "../useProcess";
 
 type Line = [type: "stdout" | "stderr" | "restart", line: string];
 
+const hasCtrl = (key: Key): boolean =>
+  (os.platform() === "darwin" && key.meta) || key.ctrl;
+
 export type ProcessProps = Styles & {
-  cmd: string[];
+  cmd: string;
   hasFocus: boolean;
 };
 const Process: React.FC<ProcessProps> = ({ cmd, hasFocus, ...styles }) => {
-  const [stdout, setStdout] = React.useState<Line[]>([]);
-  const [restartToken, setRestartToken] = React.useState(Symbol());
+  const [lines, setLines] = React.useState<Line[]>([]);
   const [scrollTop, setScrollTop] = React.useState(0);
   const [scrollboxHeight, setScrollboxHeight] = React.useState(0);
 
+  const iohandler = (chunk: Buffer) => {
+    const string = chunk.toString("utf-8");
+    const lines = string.split("\n").filter((line) => line.length > 0);
+    setLines((stdout) => [
+      ...stdout,
+      ...lines.map<Line>((line) => ["stdout", line]),
+    ]);
+  };
+
+  const onExit = React.useMemo<ExitHandler>(
+    () => (exitCode, signal) =>
+      setLines((lines) => [
+        ...lines,
+        ["restart", `Exited with ${exitCode}/${signal}`],
+      ]),
+    [setLines]
+  );
+
+  const process = useProcess({
+    cmd,
+    stdoutHandler: iohandler,
+    stderrHandler: iohandler,
+    onExit,
+  });
+
+  const restart = () => {
+    (process.status === "running" || process.status === "killed") &&
+      process.restart();
+    console.log(process.status);
+  };
+  const kill = () => {
+    process.status === "running" && process.kill();
+    console.log(process.status);
+  };
+
   useInput((input, key) => {
+    if (hasCtrl(key)) {
+      switch (input) {
+        case "r":
+          return restart();
+        case "k":
+          return kill();
+      }
+    }
+
     if (!hasFocus) return;
 
     switch (input) {
       case "r":
         return restart();
+      case "k":
+        return kill();
       case "[1~":
         return home();
       case "[4~":
@@ -40,11 +89,6 @@ const Process: React.FC<ProcessProps> = ({ cmd, hasFocus, ...styles }) => {
     }
   });
 
-  const restart = () => {
-    setRestartToken(Symbol());
-    setStdout((stdout) => [...stdout, ["restart", "Restarting process"]]);
-  };
-
   const pageful = Math.max(1, scrollboxHeight - 5);
   const scroll = (amount: number) => () =>
     setScrollTop((scrollTop) => scrollTop + amount);
@@ -55,23 +99,10 @@ const Process: React.FC<ProcessProps> = ({ cmd, hasFocus, ...styles }) => {
   const home = () => setScrollTop(0);
   const end = () => setScrollTop(Infinity);
 
-  React.useEffect(() => {
-    const process = runProcess(cmd[0], ...cmd.slice(1));
-    process.onStdout((chunk) => {
-      const string = chunk.toString("utf-8");
-      const lines = string.split("\n").filter((line) => line.length > 0);
-      setStdout((stdout) => [
-        ...stdout,
-        ...lines.map<Line>((line) => ["stdout", line]),
-      ]);
-    });
-    return () => process.kill();
-  }, [restartToken]);
-
   return (
     <Scrollbox
       {...styles}
-      lines={stdout.map(([type, text]) =>
+      lines={lines.map(([type, text]) =>
         type === "restart"
           ? { color: "black", backgroundColor: "red", text }
           : type === "stderr"
@@ -87,3 +118,7 @@ const Process: React.FC<ProcessProps> = ({ cmd, hasFocus, ...styles }) => {
 };
 
 export default Process;
+
+process.on("uncaughtException", (e, o) => {
+  console.log({ e, o });
+});

@@ -2,7 +2,6 @@ import React from "react";
 import { Box, useApp, useInput } from "ink";
 import useStdoutDimensions from "ink-use-stdout-dimensions";
 import Process from "./Process";
-import splitQuotedString from "../splitQuotedString";
 
 type AppProps = {
   commands: string[];
@@ -41,7 +40,7 @@ const App: React.FC<AppProps> = ({ commands }) => {
       {commands.map((command, i) => (
         <Process
           key={command}
-          cmd={splitQuotedString(command)}
+          cmd={command}
           width="33.33%"
           hasFocus={focusIndex === i}
         />

@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc",
     "start": "yarn build && node dist",
-    "test": "jest"
+    "test": "jest",
+    "demo": "yarn start \"node echoLoop.js p1\" \"node echoLoop.js p2\" \"node echoLoop.js p3\""
   },
   "files": [
     "dist/*"
