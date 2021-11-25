@@ -1,8 +1,7 @@
 import { Box, BoxProps, measureElement, Text, TextProps } from "ink";
 import React from "react";
-
-const clamp = (min: number, max: number) => (n: number) =>
-  Math.max(min, Math.min(max, n));
+import clamp from "../lib/clamp";
+import wrapText from "../lib/wrapText";
 
 type Line =
   | string
@@ -27,20 +26,39 @@ const Scrollbox = ({
 }: ScrollboxProps) => {
   const ref = React.useRef(null);
   const [boxHeight, setBoxHeight] = React.useState(0);
+  const [boxWidth, setBoxWidth] = React.useState(0);
 
-  const maxScrollPos = Math.max(0, lines.length - boxHeight);
+  const wrappedLines: Line[] = React.useMemo(
+    () =>
+      lines
+        .map((line) =>
+          typeof line === "string"
+            ? wrapText(line, boxWidth)
+            : wrapText(line.text, boxWidth).map((text) => ({ ...line, text }))
+        )
+        .flat(),
+    [lines, boxWidth]
+  );
+
+  const maxScrollPos = Math.max(0, wrappedLines.length - boxHeight);
   const clampScroll = clamp(0, maxScrollPos);
 
   React.useEffect(() => {
     if (!ref.current) return;
-    const { height } = measureElement(ref.current);
+    const { width, height } = measureElement(ref.current);
     setBoxHeight(height);
+    setBoxWidth(width);
     onBoxHeightUpdated(height);
-  }, [lines]);
+
+    // const debug = wrappedLines.filter(
+    //   (line) => typeof line !== "string" && typeof line.color !== "undefined"
+    // ).length;
+    // debug && console.log(debug);
+  }, [wrappedLines]);
 
   const rawScrollTop =
     scrollTop === "bottom"
-      ? lines.length - boxHeight
+      ? wrappedLines.length - boxHeight
       : scrollTop === "top"
       ? 0
       : scrollTop;
@@ -54,7 +72,7 @@ const Scrollbox = ({
   if (rawScrollTop !== autoscrolledScrollTop)
     setTimeout(() => onScrollTopUpdated(autoscrolledScrollTop), 0);
 
-  const visibleLines = lines.slice(
+  const visibleLines = wrappedLines.slice(
     autoscrolledScrollTop,
     autoscrolledScrollTop + boxHeight
   );
@@ -76,7 +94,7 @@ const Scrollbox = ({
           )
         )}
       </Box>
-      {boxHeight < lines.length && (
+      {boxHeight < wrappedLines.length && (
         <Box width={1} flexDirection="column">
           <Box flexGrow={scrollTopPercentage}></Box>
           <Box>

@@ -1,20 +1,23 @@
 {
   "name": "runmythings",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "license": "MIT",
-  "bin": "dist/index.js",
+  "bin": {
+    "runmythings": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=16.13.0"
   },
   "scripts": {
     "build": "tsc",
-    "start": "yarn build && node dist",
+    "clean": "npx -y rimraf dist",
+    "start": "yarn build && node dist/cli",
     "test": "jest",
     "demo": "yarn start \"node echoLoop.js p1\" \"node echoLoop.js p2\" \"node echoLoop.js p3\""
   },
-  "files": [
-    "dist/*"
-  ],
   "dependencies": {
     "ink": "^3.2.0",
     "ink-use-stdout-dimensions": "^1.0.5",
